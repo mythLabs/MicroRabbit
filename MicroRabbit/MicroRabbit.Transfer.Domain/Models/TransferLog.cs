@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MicroRabbit.Tranfer.Domain.Models
+namespace MicroRabbit.Transfer.Domain.Models
 {
     public class TransferLog
     {
