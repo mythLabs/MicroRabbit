@@ -17,6 +17,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MicroRabbit.Transfer.Data.Context;
+using MicroRabbit.Transfer.Domain.EventHandlers;
+using MicroRabbit.Transfer.Domain.Events;
 
 namespace MicroRabbit.Infra.IOC
 {
@@ -24,7 +26,14 @@ namespace MicroRabbit.Infra.IOC
     {
         public static void RegisterServices(IServiceCollection services)
         {
-            services.AddTransient<IEventBus, RabbitMQBus>();
+            services.AddSingleton<IEventBus, RabbitMQBus>(sp =>
+             {
+                 var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
+                 return new RabbitMQBus(sp.GetService<IMediator>(), scopeFactory);
+             }
+            );
+
+            services.AddTransient<TransferEventHandler>();
 
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<ITransferService, TransferService>();
@@ -37,6 +46,8 @@ namespace MicroRabbit.Infra.IOC
             services.AddTransient<TransferDBContext>();
 
             services.AddTransient<IRequestHandler<CreateTransferCommand, bool>, TransferCommandHandler>();
+
+            services.AddTransient<IEventHandler<TransferCreatedEvent>, TransferEventHandler>();
         } 
     }
 }
