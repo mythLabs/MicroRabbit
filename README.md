@@ -1,0 +1,2 @@
+# MicroRabbit
+RabbitMQ Event Bus
